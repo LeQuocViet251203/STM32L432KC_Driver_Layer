@@ -1,0 +1,9 @@
+# Ignore directories
+.metadata/
+Debug/
+.settings/
+
+# Ignore specific files
+*.ld
+.cproject
+.project
