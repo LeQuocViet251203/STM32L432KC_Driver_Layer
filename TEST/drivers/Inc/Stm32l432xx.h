@@ -8,6 +8,12 @@
 #ifndef INC_STM32L432XX_H_
 #define INC_STM32L432XX_H_
 
+#include <stdint.h>
+
+// Short form of volatile to be used widely
+#define _vo volatile
+
+
 /*
  * Base addresses of Flash and SRAM memories
  * */
@@ -29,6 +35,13 @@
 #define AHB2PERIPH_BASEADDR 	0x48000000U							//P95rm0432
 #define APB1PERIPH_BASEADDR		PERIPH_BASE							//P95rm0432
 #define APB2PERIPH_BASEADDR		0x40010000U							//P95rm0432
+
+/*
+ * Base addresses of peripherals hanging on the AHB1 bus
+ * */
+
+#define RCC_BASEADDR 			(AHB1PERIPH_BASEADDR+0x1000)
+
 
 
 /*
@@ -70,9 +83,79 @@
 #define SPI1_BASEADDR			(APB2PERIPH_BASEADDR+0x3000)
 #define USART1_BASEADDR			(APB2PERIPH_BASEADDR+0x3800)
 
+
+/*
+ * Structure for the GPIO peripheral register
+ * */
+typedef struct{
+	//Volatile for updating every clock cycle (for instance)
+	_vo uint32_t MODER;													//P342rm0432 //offset: 0x00
+	_vo uint32_t OTYPER;												 			 //offset: 0x04
+	_vo uint32_t OSPEEDR;															 //offset: 0x08
+	_vo uint32_t PUPDR;																 //offset: 0x0C
+	_vo uint32_t IDR;																 //offset: 0x10
+	_vo uint32_t ODR;																 //offset: 0x14
+	_vo uint32_t BSRR;																 //offset: 0x18
+	_vo uint32_t LCKR;																 //offset: 0x1C
+	_vo uint32_t AFR[2];															 //offset: 0x20 - 0x24
+}GPIO_Reg_Def_t;
+
+/*
+ * Peripherals definitions (Peripheral base addresses typecasted to xxx_Reg_Def_t)
+ * */
+#define GPIOA 					((GPIO_Reg_Def_t*)GPIOA_BASEADDR)
+#define GPIOB 					((GPIO_Reg_Def_t*)GPIOB_BASEADDR)
+#define GPIOC 					((GPIO_Reg_Def_t*)GPIOC_BASEADDR)
+#define GPIOD 					((GPIO_Reg_Def_t*)GPIOD_BASEADDR)
+#define GPIOE 					((GPIO_Reg_Def_t*)GPIOE_BASEADDR)
+#define GPIOF 					((GPIO_Reg_Def_t*)GPIOF_BASEADDR)
+#define GPIOG 					((GPIO_Reg_Def_t*)GPIOG_BASEADDR)
+#define GPIOH 					((GPIO_Reg_Def_t*)GPIOH_BASEADDR)
+#define GPIOI 					((GPIO_Reg_Def_t*)GPIOI_BASEADDR)
+
 /*
  *
  * */
+typedef struct{
+	uint32_t RCC_CR;
+	uint32_t RCC_ICSCR;
+	uint32_t RCC_CFGR;
+	uint32_t RCC_PLLCFGR;
+	uint32_t RCC_PLLSAI1CFGR;
+	uint32_t RCC_PLLSAI2CFGR;
+	uint32_t RCC_CIER;
+	uint32_t RCC_CIFR;
+	uint32_t RCC_CICR;
+	uint32_t RCC_AHB1RSTR;
+	uint32_t RCC_AHB2RSTR;
+	uint32_t RCC_AHB3RSTR;
+	uint32_t RCC_APB1RSTR1;
+	uint32_t RCC_APB1RSTR2;
+	uint32_t RCC_APB2RSTR;
+	uint32_t RCC_AHB1ENR;
+	uint32_t RCC_AHB2ENR;
+	uint32_t RCC_AHB3ENR;
+	uint32_t RCC_APB1ENR1;
+	uint32_t RCC_APB1ENR2;
+	uint32_t RCC_APB2ENR;
+	uint32_t RCC_AHB1SMENR;
+	uint32_t RCC_AHB2SMENR;
+	uint32_t RCC_AHB3SMENR;
+	uint32_t RCC_APB1SM;
+	uint32_t RCC_APB1SMENR2;
+	uint32_t RCC_APB2SMENR;
+	uint32_t RCC_CCIPR;
+	uint32_t RCC_BDCR;
+	uint32_t RCC_CSR;
+	uint32_t RCC_CRRCR;
+	uint32_t RCC_CCIPR2;
+	uint32_t RCC_DLYCFGR;
+}RCC_Reg_Def_t;
 
+/*
+ * Peripherals definition for RCC
+ * */
+
+#define RCC							((RCC_Reg_Def_t*)RCC_BASEADDR)
 
 #endif /* INC_STM32L432XX_H_ */
