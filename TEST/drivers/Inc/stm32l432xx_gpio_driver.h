@@ -111,6 +111,7 @@ void GPIO_ToggleOutputPin(GPIO_Reg_Def_t *pGPIOx,uint8_t PinNumber);
 /*
  * IRQ Configuration and ISR handling
  * */
-void GPIO_IRQConfig(uint8_t IRQNumber,uint8_t IRQPriority,uint8_t EnorDi);
+void GPIO_IRQConfig(uint8_t IRQNumber,uint8_t EnorDi);//,uint8_t IRQPriority deleted to separate to a diff func
+void GPIO_IRQPriorityConfig(uint8_t IRQNumber,uint8_t IRQPriority);
 void GPIO_IRQHandling(uint8_t PinNumber);
 #endif /* INC_STM32L432XX_GPIO_DRIVER_H_ */

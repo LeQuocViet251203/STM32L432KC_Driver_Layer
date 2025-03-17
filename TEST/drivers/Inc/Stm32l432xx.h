@@ -12,8 +12,30 @@
 
 // Short form of volatile to be used widely
 #define _vo volatile
+/*
+ * PROCESSOR SPECIFIC DETAILS
+ * ARM Cortex Mx Processor NVIC ISERx register addresses
+ * */
+#define NVIC_ISER0 				((_vo uint32_t*)0xE000E100)		   //DUIP219
+#define NVIC_ISER1 				((_vo uint32_t*)0xE000E104)
+#define NVIC_ISER2 				((_vo uint32_t*)0xE000E108)
+#define NVIC_ISER3 				((_vo uint32_t*)0xE000E10C)
+
+/*
+ * ARM Cortext Mx Processor NVIC ICERx register addresses
+ * */
+#define NVIC_ICER0 				((_vo uint32_t*)0xE000E180)		   //DUIP219
+#define NVIC_ICER1 				((_vo uint32_t*)0XE000E184)
+#define NVIC_ICER2 				((_vo uint32_t*)0XE000E188)
+#define NVIC_ICER3 				((_vo uint32_t*)0XE000E18C)
 
 
+/*
+ * ARM Cortext Mx Processor Priority register address Calculation
+ * */
+#define NVIC_PR_BASE_ADDR 		((_vo uint32_t*)0xE000E400)
+
+#define NO_PR_BITS_IMPLEMENTED  4
 /*
  * Base addresses of Flash and SRAM memories
  * */
@@ -114,7 +136,7 @@ typedef struct{
 #define GPIOI 					((GPIO_Reg_Def_t*)GPIOI_BASEADDR)
 
 /*
- *
+ * peripheral register definition structure for RCC
  * */
 typedef struct{
 	uint32_t RCC_CR;
@@ -152,14 +174,40 @@ typedef struct{
 	uint32_t RCC_DLYCFGR;
 }RCC_Reg_Def_t;
 
+/*
+ * Peripheral register definition structure for EXTI
+ * */
+typedef struct{
+	_vo uint32_t IMR; 				//EXTI_IMR1 P481rm0432 offset 0x00
+	_vo uint32_t EMR; 				//EXTI_EMR1 P481rm0432		  0x04
+	_vo uint32_t RTSR; 			 	//EXTI_RTSR1 P481rm0432		  0x08
+	_vo uint32_t FTSR; 				//EXTI_FTSR1 P481rm0432		  0x0C
+	_vo uint32_t SWIER; 			//EXTI_SWIER1 P481rm0432	  0x10
+	_vo uint32_t PR; 				//EXTI_PR1 P481rm0432		  0x14
 
+}EXTI_Reg_Def_t;
+
+/*
+ * Peripheral register definition structure for SYSCFG
+ * */
+typedef struct{
+	_vo uint32_t MEMRMP; 				//P364rm0432 offset 	  0x00
+	_vo uint32_t CFGR1; 				//P364rm0432			  0x04
+	_vo uint32_t EXTICR[4]; 			//P364rm0432		  	  0x08-0x14
+	_vo uint32_t SCSR;					//						  0x18
+	_vo uint32_t CFGR2;					//						  0x1C
+	_vo uint32_t SWPR;  				// 						  0x20
+	_vo uint32_t SKR;
+	_vo uint32_t SWPR2;
+
+}SYSCFG_Reg_Def_t;
 /*
  * Peripherals definition for RCC
  * */
 
 #define RCC							((RCC_Reg_Def_t*)RCC_BASEADDR)
-
-
+#define EXTI						((EXTI_Reg_Def_t*)EXTI_BASEADDR)
+#define SYSCFG						((SYSCFG_Reg_Def_t*)SYSCFG_BASEADDR)
 /*
  * Clock Enable Macros for GPIOx peripherals
  * */
@@ -244,6 +292,42 @@ typedef struct{
  * Clock Disable Macros for SYSCFG peripherals
  * */
 #define SYSCFG_PCLK_DI()			(RCC->RCC_APB2ENR &= ~(1<<0))
+/*
+ *
+ * */
+#define GPIO_BASEADDR_TO_CODE(x)	((x == GPIOA)?0:\
+									 (x == GPIOB)?1:\
+									 (x == GPIOC)?2:\
+									 (x == GPIOD)?3:\
+									 (x == GPIOE)?4:\
+									 (x == GPIOF)?5:\
+									 (x == GPIOG)?6:\
+									 (x == GPIOH)?7:\
+								     (x == GPIOI)?8:0)
+
+/*
+ * IRQ (Interrupt Request) Numbers of STM32L432xx MCU
+ * */
+#define IRQ_NO_EXTI0				6					//Search in P468rm0432
+#define IRQ_NO_EXTI1				7
+#define IRQ_NO_EXTI2				8
+#define IRQ_NO_EXTI3				9
+#define IRQ_NO_EXTI4				10
+#define IRQ_NO_EXTI9_5				23
+#define IRQ_NO_EXTI15_10			40
+
+/*
+ * Macros to reset GPIOx peripherals
+ * */
+#define GPIOA_REG_RESET()			do{(RCC->RCC_AHB2RSTR |= (1<<0));(RCC->RCC_AHB2RSTR &= ~(1<<0));}while(0)
+#define GPIOB_REG_RESET()			do{(RCC->RCC_AHB2RSTR |= (1<<1));(RCC->RCC_AHB2RSTR &= ~(1<<1));}while(0)
+#define GPIOC_REG_RESET()			do{(RCC->RCC_AHB2RSTR |= (1<<2));(RCC->RCC_AHB2RSTR &= ~(1<<2));}while(0)
+#define GPIOD_REG_RESET()			do{(RCC->RCC_AHB2RSTR |= (1<<3));(RCC->RCC_AHB2RSTR &= ~(1<<3));}while(0)
+#define GPIOE_REG_RESET()			do{(RCC->RCC_AHB2RSTR |= (1<<4));(RCC->RCC_AHB2RSTR &= ~(1<<4));}while(0)
+#define GPIOF_REG_RESET()			do{(RCC->RCC_AHB2RSTR |= (1<<5));(RCC->RCC_AHB2RSTR &= ~(1<<5));}while(0)
+#define GPIOG_REG_RESET()			do{(RCC->RCC_AHB2RSTR |= (1<<6));(RCC->RCC_AHB2RSTR &= ~(1<<6));}while(0)
+#define GPIOH_REG_RESET()			do{(RCC->RCC_AHB2RSTR |= (1<<7));(RCC->RCC_AHB2RSTR &= ~(1<<7));}while(0)
+#define GPIOI_REG_RESET()			do{(RCC->RCC_AHB2RSTR |= (1<<8));(RCC->RCC_AHB2RSTR &= ~(1<<8));}while(0)
 
 /*
  * Some generic macros
