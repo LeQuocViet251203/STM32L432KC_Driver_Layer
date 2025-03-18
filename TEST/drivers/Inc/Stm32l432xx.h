@@ -175,6 +175,44 @@ typedef struct{
 }RCC_Reg_Def_t;
 
 /*
+ * Peripheral register definition structure for SPI
+ * */
+typedef struct{
+	_vo uint16_t CR1;
+	_vo uint16_t CR2;
+	_vo uint16_t SR;
+	_vo uint16_t DR;
+	_vo uint16_t CRCPR;
+	_vo uint16_t RXCRCR;
+	_vo uint16_t TXCRCR;
+}SPI_Reg_Def_t;
+
+/*
+ * SPI peripheral definitions
+ * */
+#define SPI1 	(SPI_Reg_Def_t*)SPI1_BASEADDR
+#define SPI2	(SPI_Reg_Def_t*)SPI2_BASEADDR
+#define SPI3	(SPI_Reg_Def_t*)SPI3_BASEADDR
+
+/*
+ * Bit position definitions of SPI peripheral
+ * */
+#define SPI_CR1_CPHA		0
+#define SPI_CR1_CPOL		1
+#define SPI_CR1_MSTR		2
+#define SPI_CR1_BR			3
+#define SPI_CR1_SPE			6
+#define SPI_CR1_LSB_FIRST	7
+#define SPI_CR1_SSI			8
+#define SPI_CR1_SSM			9
+#define SPI_CR1_RX_ONLY		10
+#define SPI_CR1_CRCL		11
+#define SPI_CR1_CRCN_EXT	12
+#define SPI_CR1_CRC_EN		13
+#define SPI_CR1_BIDIOE		14
+#define SPI_CR1_BIDIMODE	15
+
+/*
  * Peripheral register definition structure for EXTI
  * */
 typedef struct{
