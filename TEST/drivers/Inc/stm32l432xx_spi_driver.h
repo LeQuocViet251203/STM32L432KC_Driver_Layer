@@ -27,6 +27,12 @@ typedef struct{
 typedef struct{
 	SPI_Reg_Def_t 		*pSPIx;
 	SPI_Config_t 		SPIConfig;
+	uint8_t 			*pTxBuffer; 		//store the app. Tx buffer address
+	uint8_t 			*pRxBuffer; 		//Store teh app. Rx buffer address
+	uint8_t 			TxLen;				// store the Tx Len
+	uint8_t 			RxLen;				//Store the Rx Len
+	uint8_t				TxState;			//Store the Tx state
+	uint8_t				RxState;			//Store the Rx State
 }SPI_Handle_t;
 /*
  * @DeviceMode
@@ -52,7 +58,13 @@ typedef struct{
 #define SPI_SCLK_SPEED_DIV128			6
 #define SPI_SCLK_SPEED_DIV256			7
 
-
+/*
+ * Possible SPI Application events
+ * */
+#define SPI_EVENT_TX_CMPLT				1
+#define SPI_EVENT_RX_CMPLT				2
+#define SPI_EVENT_OVR_ERR				3
+#define SPI_EVENT_CRC_ERR				4
 /*
  * @CPHA
  * */
@@ -74,6 +86,12 @@ typedef struct{
 #define SPI_SSM_HW						1	//Hardware
 #define SPI_SSM_SW						0	//Software
 /*
+ * SPI related status flags definitions
+ * */
+#define SPI_TXE_FLAG					(1<<SPI_SR_TXE)
+#define SPI_RXNE_FLAG					(1<<SPI_SR_RXNE)
+#define SPI_BUSY_FLAG					(1<<SPI_SR_BSY)
+/*
  * APIs supported by this driver
  * The functions prototype - APIs
  * */
@@ -86,12 +104,14 @@ void SPI_PeriClockControl(SPI_Reg_Def_t *pSPIx,uint8_t EnorDi);
  * */
 void SPI_Init(SPI_Handle_t *pSPIHandle); //Function to initialize port and pin for intended purposes
 void SPI_DeInit(SPI_Reg_Def_t *pSPIx); //Reset to the reset state - RCC_AHB2RSTR - RCC AHB2 peripheral reset register
-
+uint8_t SPI_GetFlagStatus(SPI_Reg_Def_t *pSPIx, uint32_t FlagName);
 /*
  * Data send and Receive
  * */
 void SPI_SendData(SPI_Reg_Def_t *pSPIx,uint8_t *pTxBuffer, uint32_t Len);
 void SPI_ReceiveData(SPI_Reg_Def_t *pSPIx,uint8_t *pRxBuffer, uint32_t Len);
+void SPI_SendDataIT(SPI_Handle_t *pSPIHandle,uint8_t *pTxBuffer, uint32_t Len);
+uint8_t SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle,uint8_t *pRxBuffer, uint32_t Len);
 /*
  * IRQ Configuration and ISR handling
  * */
@@ -101,4 +121,15 @@ void SPI_IRQHandling(SPI_Handle_t *pHandle);
 /*
  * Other peripheral control APIs
  * */
+void SPI_PeripheralControl(SPI_Reg_Def_t *pSPIx,uint8_t EnOrDi);
+void SPI_SSIConfig(SPI_Reg_Def_t *pSPIx,uint8_t EnOrDi);
+void SPI_SSOEConfig(SPI_Reg_Def_t *pSPIx,uint8_t EnOrDi);
+void SPI_CLearOVRFlag(SPI_Reg_Def_t *pSPIx);
+void SPI_CloseTransmission(SPI_Handle_t *pSPIHandle);
+void SPI_CloseReception(SPI_Handle_t *pSPIHandle);
+/*
+ * Application callback
+ * */
+void SPI_ApplicationEventCallback(SPI_Handle_t *pSPIHandle,uint8_t AppEv);
 #endif /* INC_STM32L432XX_SPI_DRIVER_H_ */
+

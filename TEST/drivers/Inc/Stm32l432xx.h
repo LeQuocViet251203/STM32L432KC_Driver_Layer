@@ -9,9 +9,12 @@
 #define INC_STM32L432XX_H_
 
 #include <stdint.h>
+#include <stddef.h> //Null declaration
 
 // Short form of volatile to be used widely
 #define _vo volatile
+#define __weak __attribute__((weak))
+
 /*
  * PROCESSOR SPECIFIC DETAILS
  * ARM Cortex Mx Processor NVIC ISERx register addresses
@@ -104,7 +107,12 @@
 #define EXTI_BASEADDR			(APB2PERIPH_BASEADDR+0x0400)		//APB2 + offset
 #define SPI1_BASEADDR			(APB2PERIPH_BASEADDR+0x3000)
 #define USART1_BASEADDR			(APB2PERIPH_BASEADDR+0x3800)
-
+/*
+ * Possible SPI Application States
+ * */
+#define SPI_READY 				0
+#define SPI_BUSY_IN_RX			1
+#define SPI_BUSY_IN_TX			2
 
 /*
  * Structure for the GPIO peripheral register
@@ -211,7 +219,25 @@ typedef struct{
 #define SPI_CR1_CRC_EN		13
 #define SPI_CR1_BIDIOE		14
 #define SPI_CR1_BIDIMODE	15
-
+/*
+ * Bit position definitions SPI_SR
+ * */
+#define SPI_SR_RXNE			0
+#define SPI_SR_TXE			1
+#define SPI_SR_CHSIDE		2
+#define SPI_SR_UDR			3
+#define SPI_SR_CRCERR		4
+#define SPI_SR_MODF			5
+#define SPI_SR_OVR			6
+#define SPI_SR_BSY			7
+#define SPI_SR_FRE			8
+/*
+ * Bit position definitions SPI_CR2
+ * */
+#define SPI_CR2_DS			8
+#define SPI_CR2_TXEIE 		11
+#define SPI_CR2_RXEIE		6
+#define SPI_CR2_ERRIE		5
 /*
  * Peripheral register definition structure for EXTI
  * */
@@ -377,5 +403,7 @@ typedef struct{
 #define RESET DISABLE
 #define GPIO_PIN_SET SET
 #define GPIO_PIN_RESET RESET
+#define FLAG_RESET 	   RESET
+#define FLAG_SET	   SET
 
 #endif /* INC_STM32L432XX_H_ */
